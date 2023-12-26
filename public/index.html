@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>BlueBoi</title>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="icon" type="image/png" href="./bluetooth.png">
+		<script src="./script.js" defer></script>
+	</head>
+	<body>
+		<div style="width: 350px; height: auto; margin: auto">
+			<h1 style="width: fit-content; margin: 20px auto;">bluboi</h1>
+			<div id="controls" style="width: max-content; margin: 10px auto;">
+				<button data-href="/scan" id="scan">Scan</button>
+				<button data-href="/stop" id="stop">Stop Scanning</button>
+				<button data-href="/disconnect" id="disconnect">Disconnect</button>
+			</div>
+			<table style="width: 100%; font-size: 14px; max-height: 300px; overflow-y: auto; margin: 20px auto;" cellspacing="0" border="1">
+				<thead>
+					<tr>
+						<th>
+							Name
+						</th>
+						<th>
+							Address
+						</th>
+						<th>
+						</th>
+					</tr>
+				</thead>
+				<tbody id="devices">
+				</tbody>
+			</table>
+			<div id="events" style="width: 100%; max-height: 300px; overflow-y: auto; border: 1px black solid;">
+			</div>
+		</div>
+	</body>
+</html>

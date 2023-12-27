@@ -1,10 +1,12 @@
 const devices = document.getElementById("devices");
 const scanBtn = document.getElementById("scan");
 const disonnectBtn = document.getElementById("disonnect");
+const clearBtn = document.getElementById("clear");
 const stopBtn = document.getElementById("stop");
 
 const events = document.getElementById("events");
 const evtSource = new EventSource("http://" + document.location.host + "/events");
+const devicesMap = new Map()
 
 const appendLog = (text) => {
 	const p = document.createElement("p");
@@ -17,13 +19,9 @@ const appendLog = (text) => {
 	events.appendChild(p);
 }
 
-const appendDevice = (data) => {
-	const d = data.split(";")
-	if (d.length < 2) {
-		console.log("[ERROR] Not enough device info -", d)
-		return 
-	}
-	const [addr, name] = d;
+appendLog("Logs:")
+
+const appendDevice = (name, addr) => {
 	const tr = document.createElement("tr");
 	const tn = document.createElement("td");
 	tn.innerText = name;
@@ -49,15 +47,25 @@ evtSource.onmessage = (e) => {
 };
 
 evtSource.addEventListener("DEVICE", (e) => {
-	appendDevice(e.data.replaceAll('"',''));
+	const d = e.data.replaceAll('"','').split(";")
+	if (d.length < 2) {
+		console.log("[ERROR] Not enough device info -", d);
+		return ;
+	}
+	const [addr, name] = d;
+	if (devicesMap.get(addr)) {
+		return;
+	}
+	devicesMap.set(addr, true)
+	appendDevice(name, addr);
 })
 
 evtSource.addEventListener("INFO", (e) => {
-	appendLog(e.data)
+	appendLog(e.data.replaceAll('"', ''));
 })
 
 evtSource.addEventListener("ERROR", (e) => {
-	appendLog(e.data)
+	appendLog(e.data.replaceAll('"', ''));
 })
 
 evtSource.onerror = (e) => {
@@ -68,20 +76,21 @@ evtSource.onopen = (e) => {
 	console.log("[INFO] ", e)
 }
 
-scan.addEventListener("click", () => {
-	devices.innerHTML = ""
+clearBtn.addEventListener("click", () => {
+	events.innerHTML = ""
+	appendLog("Logs:")
 })
 
 const addHrefListener = (btn) => {
 	btn.addEventListener("click", async () => {
 		const url = btn.getAttribute("data-href")
-		let data = await fetch(url)
-		data = await data.text()
-		console.log(data)
+		if (!url) {
+			return
+		}
+		await fetch(url)
 	})
 }
 
 document.querySelectorAll("button").forEach(btn => {
 	addHrefListener(btn);
 })
-
